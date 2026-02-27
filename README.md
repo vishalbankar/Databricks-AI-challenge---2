@@ -65,3 +65,33 @@ Bronze -> Silver -> Gold | Data Quality | User-Level Aggregations
 Take a look at day 01 parcticle learing in notebook 
 
 Day 02 [Link to Notebook](code/Day_02/Day_02_medallian_Architecture_Feature_Engg.ipynb)
+
+
+# Day 03 📒 Notebooks vs Job |Parameterized Notebooks
+
+Here's what I covered:
+📒 Notebooks vs Jobs - 
+The Production Gap Notebooks = development playground. we click Run, watch it execute, fix errors live. 
+Jobs = production reality. Runs at 2 AM when you're asleep, retries on failure, emails alerts. 
+Same code. Completely different purpose.
+
+🎛️ Parameterized Notebooks - Making Code Reusable Added dbutils.widgets to accept parameters like catalog, run_date, write_mode. 
+The catch? Widget values are ALWAYS strings. Spent an hour debugging why my dates weren't comparing properly before I realized I needed to cast them 😅
+
+On Day 02 I had one big notebook doing Bronze → Silver → Gold. 
+Today I learned to break it into pieces that actually run themselves in production.
+
+🔗 The Orchestrator Pattern Split my monolith into 3 notebooks:
+01_bronze_ingest (raw data in)
+02_silver_clean (quality checks)
+03_gold_features (analytics-ready features)
+orchestrator (the master brain using UI by creating job and adding each layer notebook as tasks and and setting dependency on bronze and silver)
+
+Each notebook does ONE thing. Returns SUCCESS or FAIL. The orchestrator calls them in sequence using dbutils.notebook.run() and validates each step before moving forward.
+
+⏰ Scheduling - Set It and Forget It Created a Databricks Job with cron schedule: 0 0 9 * * ? (daily at 2 AM) Added 2 automatic retries with 5-minute delays Configured email alerts on failure
+
+Take a look at day 01 parcticle learing in notebook 
+https://github.com/vishalbankar/Databricks_AI_challenge_2/tree/8bf78e48b19db16293955b16006f8c9d7499a836/Day_03
+Day 03 [Link to Notebook](Day_03)
+

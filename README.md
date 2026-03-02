@@ -125,5 +125,52 @@ The checkpoint is what made that work.
 🔷 trigger(availableNow=True) — the key for notebooks
 Instead of running the stream continuously, availableNow processes all pending data and stops automatically. No manual interruption needed. Perfect for scheduled jobs and learning.
 
-Take a look at day 01 parcticle learing in notebook Day 04
+Take a look at day 04 parcticle learing in notebook Day 04
 Day 04 [Link to Notebook](Day_04/Day_04_Structured_Streaming.ipynb)
+
+# Day 05 Production-Grade Feature Engineering 
+Days 1-4 = building the data pipeline.
+Day 5 = building the AI system.
+
+Same data. Completely different mindset.
+
+Here's what that shift looks like in practice:
+
+➡️5,721,593 users in my dataset
+➡️ Only 862,847 ever made a purchase (15.08%)
+➡️ 4,858,746 never bought a single thing (84.92%)
+
+That 85/15 split is called class imbalance — and it's the silent killer of ML models.
+
+A model trained on raw data learns the lazy answer:
+→ Always predict "won't buy"
+→ Gets 85% accuracy
+→ Catches ZERO actual purchasers
+→ Completely useless for the business
+
+So today I learned three things that actually fix this:
+
+👉 Target Creation
+will_purchase = 1 if total_purchases > 0, else 0
+Simple label. Clear business question: will this user buy?
+
+👉 Label Leakage (the most dangerous mistake)
+I had to DROP columns like total_revenue, purchase_rate, avg_purchase_price from my Gold feature table.
+Why? Because they ENCODE the answer.
+A model trained on revenue data doesn't learn behaviour — it learns to cheat.
+
+👉 Class Weights
+Instead of touching the data, I told the model:
+"Misclassifying a purchaser costs 3.3x more than misclassifying a viewer"
+weight_0 = 0.5888 | weight_1 = 3.3155
+
+And the stratified train/test split?
+Train: 4,577,964 rows → 15.09% purchasers
+Test: 1,143,629 rows → 15.05% purchasers
+
+Class ratio preserved perfectly. Distribution validated.
+Dataset saved to ecommerce.gold.ml_datase
+
+Take a look at day 05 parcticle learing in notebook Day 05
+
+Day 05 [Link to Notebook](Day_05/Day_05_Feature_engg.ipynb)
